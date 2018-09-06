@@ -1,5 +1,6 @@
 package cn.edu.jit.reptile.processor.jd;
 
+import cn.edu.jit.reptile.config.SpiderConfig;
 import cn.edu.jit.reptile.pojo.DO.CommodityDO;
 import cn.edu.jit.reptile.pojo.DO.PriceDO;
 import cn.edu.jit.reptile.pojo.DTO.PriceDTO;
@@ -7,7 +8,6 @@ import cn.edu.jit.reptile.pojo.DTO.ShopDTO;
 import cn.edu.jit.reptile.service.CommodityService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -34,12 +34,9 @@ public class CommodityPageProcessor implements PageProcessor {
     public static final String FILE_KEY = "commodities";
     private static final String PROTOCOL = "https:";
     private static final String URL_REGEX = "https://list.jd.com/list.html\\?cat=.*&page=\\d+.*";
-    @Value("${spider.retry-times}")
-    private Integer retryTimes;
-    @Value("${spider.time-out}")
-    private Integer timeOut;
-    @Value("${spider.sleep-time}")
-    private Integer sleepTime;
+    @Autowired
+    private SpiderConfig spiderConfig;
+
     @Autowired
     private CommodityService commodityService;
 
@@ -122,8 +119,8 @@ public class CommodityPageProcessor implements PageProcessor {
     public Site getSite() {
         return Site.me()
                 .setUserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36")
-                .setRetryTimes(retryTimes)
-                .setTimeOut(timeOut)
-                .setSleepTime(sleepTime);
+                .setRetryTimes(spiderConfig.getRetryTimes())
+                .setTimeOut(spiderConfig.getTimeOut())
+                .setSleepTime(spiderConfig.getSleepTime());
     }
 }

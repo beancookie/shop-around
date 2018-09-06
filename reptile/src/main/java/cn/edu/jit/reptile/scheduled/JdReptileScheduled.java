@@ -1,6 +1,6 @@
 package cn.edu.jit.reptile.scheduled;
 
-import cn.edu.jit.reptile.config.StartUrlsConfig;
+import cn.edu.jit.reptile.config.SpiderConfig;
 import cn.edu.jit.reptile.pipeline.CommodityPipeline;
 import cn.edu.jit.reptile.processor.jd.CommodityPageProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +16,8 @@ import us.codecraft.webmagic.scheduler.RedisScheduler;
  */
 @Component
 public class JdReptileScheduled {
-    @Value("${spider.thread}")
-    private Integer thread;
-
     @Autowired
-    private StartUrlsConfig startUrlsConfig;
+    private SpiderConfig spiderConfig;
 
     @Autowired
     private CommodityPageProcessor commodityPageProcessor;
@@ -52,10 +49,10 @@ public class JdReptileScheduled {
     @Scheduled(cron = "0 0 2 * * ?")
     public void process() {
         Spider spider = Spider.create(commodityPageProcessor);
-        startUrlsConfig.getStartUrls().forEach(spider::addUrl);
+        spiderConfig.getStartUrls().forEach(spider::addUrl);
         spider.addPipeline(commodityPipeline)
                 .setScheduler(redisScheduler)
-                .thread(thread);
+                .thread(spiderConfig.getThread());
         final String uuid = spider.getUUID();
         redisScheduler.resetDuplicateCheck(new Task(uuid));
         spider.run();

@@ -1,9 +1,9 @@
 package cn.edu.jit.reptile.processor.jd;
 
+import cn.edu.jit.reptile.config.SpiderConfig;
 import cn.edu.jit.reptile.pojo.DO.MenuDO;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.nodes.Element;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
@@ -24,12 +24,8 @@ import java.util.List;
 public class MenuPageProcessor implements PageProcessor {
     public static final String FILE_KEY = "menus";
     private static final String PROTOCOL = "https:";
-    @Value("${spider.retry-times}")
-    private Integer retryTimes;
-    @Value("${spider.time-out}")
-    private Integer timeOut;
-    @Value("${spider.sleep-time}")
-    private Integer sleepTime;
+    @Autowired
+    private SpiderConfig spiderConfig;
     @Override
     public void process(Page page) {
         List<MenuDO> resultMenus = new ArrayList<>();
@@ -51,9 +47,9 @@ public class MenuPageProcessor implements PageProcessor {
     public Site getSite() {
         return Site.me()
                 .setUserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36")
-                .setRetryTimes(retryTimes)
-                .setTimeOut(timeOut)
-                .setSleepTime(sleepTime);
+                .setRetryTimes(spiderConfig.getRetryTimes())
+                .setTimeOut(spiderConfig.getTimeOut())
+                .setSleepTime(spiderConfig.getSleepTime());
     }
 }
 

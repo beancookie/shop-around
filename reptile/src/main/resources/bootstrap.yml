@@ -1,0 +1,17 @@
+server:
+  port: 7002
+
+spring:
+  application:
+    name: reptile
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config
+      profile: dev
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8888/eureka/

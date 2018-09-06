@@ -45,7 +45,7 @@ public class CommodityPageProcessor implements PageProcessor {
         List<Selectable> commodities = html.$(".gl-item").nodes();
         // 商品id以便获取商品价格
         List<String> ids = new LinkedList<>();
-        // 店铺id以便获取店铺价格
+        // 店铺id以便获取店铺名称
         List<String> shopIds = new LinkedList<>();
         // 商品结果列表
         List<CommodityDO> resultCommodities = new LinkedList<>();

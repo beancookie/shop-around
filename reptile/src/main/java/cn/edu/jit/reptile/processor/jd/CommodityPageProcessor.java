@@ -17,9 +17,8 @@ import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.Selectable;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +30,7 @@ import java.util.List;
 @Slf4j
 @RefreshScope
 public class CommodityPageProcessor implements PageProcessor {
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH");
     public static final String FILE_KEY = "commodities";
     private static final String PROTOCOL = "https:";
     private static final String URL_REGEX = "https://list.jd.com/list.html\\?cat=.*&page=\\d+.*";
@@ -56,7 +56,7 @@ public class CommodityPageProcessor implements PageProcessor {
             resultCommodity.setCategory(category);
             // id
             String commodityId = commodity.xpath("//li/div/@data-sku").get();
-            resultCommodity.setId(commodityId);
+            resultCommodity.set_id(commodityId);
             ids.add(commodityId);
             // url
             String url = commodity.$(".p-img").xpath("//div/a/@href").get();
@@ -84,16 +84,16 @@ public class CommodityPageProcessor implements PageProcessor {
         // 通过异步接口获取商品店铺
         Iterator<ShopDTO> shopIterator = commodityService.getShopNamesByIds(shopIds).iterator();
         // 当前日期
-        LocalDateTime nowDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(LocalTime.now().getHour(), 0));
+        String nowDateTime = FORMATTER.format(LocalDateTime.now().plusDays(1));
         // 有序列表设置价格
         resultCommodities.forEach(commodity -> {
             if (priceIterator.hasNext()) {
                 PriceDTO priceDTO = priceIterator.next();
                 String priceId = priceDTO.getId().substring(2, priceDTO.getId().length());
-                String id = commodity.getId();
+                String id = commodity.get_id();
                 // 价格id和商品id相同时设置价格
                 if (id.equals(priceId)) {
-                    commodity.addPrice(new PriceDO(priceDTO.getP(), nowDateTime.minusHours(1)));
+                    commodity.addPrice(new PriceDO(priceDTO.getP(), nowDateTime));
                 }
             }
             if (shopIterator.hasNext()) {

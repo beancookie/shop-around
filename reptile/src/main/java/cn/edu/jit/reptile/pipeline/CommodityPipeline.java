@@ -28,7 +28,7 @@ public class CommodityPipeline implements Pipeline {
     public void process(ResultItems resultItems, Task task) {
         List<CommodityDO> commodities = resultItems.get(CommodityPageProcessor.FILE_KEY);
         commodities.forEach(commodity -> {
-            Optional<CommodityDO> optional = commodityRepository.findById(commodity.getId());
+            Optional<CommodityDO> optional = commodityRepository.findById(commodity.get_id());
             // 更新价格
             if (optional.isPresent()) {
                 CommodityDO commodityDO = optional.get();

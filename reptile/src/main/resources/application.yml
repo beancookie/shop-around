@@ -1,6 +1,6 @@
 spring:
   data:
     mongodb:
-      database: jd
+      database: shop_around
   redis:
     host: 127.0.0.1

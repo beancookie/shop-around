@@ -1,6 +1,7 @@
 package cn.edu.jit.reptile.pojo.DO;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Set;
@@ -15,7 +16,8 @@ public class CommodityDO {
     /**
      * 商品id
      */
-    private String id;
+    @Id
+    private String _id;
     /**
      * 商品名称
      */

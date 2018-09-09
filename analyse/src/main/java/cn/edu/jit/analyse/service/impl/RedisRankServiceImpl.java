@@ -32,6 +32,7 @@ public class RedisRankServiceImpl implements RedisRankService {
         data.forEach((category, depreciates) -> {
             // redis中的key
             String key = "rank:" + category + ":" + day;
+            log.info("Add {} to redis", key);
             TreeSet<DepreciateDO> depreciateSet = new TreeSet<>();
             // 去除redis中的旧排行榜
             depreciateSet.addAll(redisTemplate.opsForZSet().range(key, 0, -1));

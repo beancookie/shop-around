@@ -4,19 +4,22 @@ import cn.edu.jit.analyse.config.SparkConfig;
 import cn.edu.jit.analyse.pojo.DO.DepreciateDO;
 import cn.edu.jit.analyse.service.DepreciateRankService;
 import cn.edu.jit.analyse.service.RedisRankService;
+import cn.edu.jit.reptile.config.Contents;
 import cn.edu.jit.reptile.pojo.DO.CommodityDO;
 import com.mongodb.spark.MongoSpark;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.*;
+import org.spark_project.jetty.util.BlockingArrayQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -25,12 +28,13 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class DepreciateRankServiceImpl implements DepreciateRankService {
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     @Autowired
     private SparkConfig sparkConfig;
 
     @Autowired
     private RedisRankService redisRankService;
+
+    private static final ThreadPoolExecutor POOLS = new ThreadPoolExecutor(5, 10, 100, TimeUnit.SECONDS, new BlockingArrayQueue<>());
 
     @PostConstruct
     public void init() {
@@ -39,6 +43,7 @@ public class DepreciateRankServiceImpl implements DepreciateRankService {
 
     /**
      * 创建SparkSession
+     *
      * @return
      */
     private SparkSession createSparkSession() {
@@ -53,16 +58,17 @@ public class DepreciateRankServiceImpl implements DepreciateRankService {
 
     /**
      * 分析指定时间的价格数据与当前价格数据的降价额度排行榜
+     *
      * @param sparkSession
-     * @param currentData 待对比数据
-     * @param time 对日期
+     * @param currentData  待对比数据
+     * @param date         对日期
      * @return
      */
-    private Map<String, List<DepreciateDO>> getDayRankByDays(SparkSession sparkSession, Dataset<Row> currentData, LocalDateTime time) {
+    private Map<String, List<DepreciateDO>> getDayRankByDays(SparkSession sparkSession, Dataset<Row> currentData, LocalDate date) {
         // 对比数据集
-        Dataset<Row> comparisonData = sparkSession.sql("SELECT _id, name, url, imgUrl, shopName, category, inline(prices) FROM commodity").filter("time = '" + time.format(FORMATTER) + " 23" + "' AND price > 0");
+        Dataset<Row> comparisonData = sparkSession.sql("SELECT _id, name, url, imgUrl, shopName, category, inline(prices) FROM commodity").filter("date = '" + date.format(Contents.FORMATTER) + "' AND price > 0");
         Dataset<Row> tmpData = currentData.join(comparisonData, currentData.col("_id").equalTo(comparisonData.col("_id")), "left")
-                .select(currentData.col("_id"), currentData.col("name"), currentData.col("url"), currentData.col("imgUrl"), currentData.col("shopName"), currentData.col("category"), comparisonData.col("price").$minus(currentData.col("price")).as("depreciate"), currentData.col("time")).alias("tmp");
+                .select(currentData.col("_id"), currentData.col("name"), currentData.col("url"), currentData.col("imgUrl"), currentData.col("shopName"), currentData.col("category"), currentData.col("price").$minus(comparisonData.col("price")).as("depreciate"), currentData.col("date")).alias("tmp");
         // 创建临时视图
         tmpData.createOrReplaceTempView("tmp");
         return tmpData.sqlContext().sql("SELECT _id, name, url, imgUrl, shopName, category, depreciate FROM (" +
@@ -74,17 +80,31 @@ public class DepreciateRankServiceImpl implements DepreciateRankService {
                 .collect(Collectors.groupingBy(DepreciateDO::getCategory, Collectors.toList()));
     }
 
+    private class Task implements Runnable {
+
+        private LocalDate date;
+
+        public Task(LocalDate date) {
+            this.date = date;
+        }
+
+        @Override
+        public void run() {
+            SparkSession sparkSession = createSparkSession();
+            JavaSparkContext jsc = new JavaSparkContext(sparkSession.sparkContext());
+            Dataset<CommodityDO> explicitDS = MongoSpark.load(jsc).toDS(CommodityDO.class);
+            // 创建商品视图
+            explicitDS.createOrReplaceTempView("commodity");
+            // 待对比数据集
+            Dataset<Row> currentData = sparkSession.sql("SELECT _id, name, url, imgUrl, shopName, category, inline(prices) FROM commodity").filter("date = '" + Contents.FORMATTER.format(date) + "' AND price > 0");
+            // 将排行榜存入redis
+            sparkConfig.getRankDays().forEach(day -> redisRankService.addRankToRedisByDay(getDayRankByDays(sparkSession, currentData, date.minusDays(day)), day));
+            jsc.close();
+        }
+    }
+
     @Override
-    public void dayRank(LocalDateTime time) {
-        SparkSession sparkSession = createSparkSession();
-        JavaSparkContext jsc = new JavaSparkContext(sparkSession.sparkContext());
-        Dataset<CommodityDO> explicitDS = MongoSpark.load(jsc).toDS(CommodityDO.class);
-        // 创建商品视图
-        explicitDS.createOrReplaceTempView("commodity");
-        // 待对比数据集
-        Dataset<Row> currentData = sparkSession.sql("SELECT _id, name, url, imgUrl, shopName, category, inline(prices) FROM commodity").filter("time = '" + FORMATTER.format(time) + " 21" + "' AND price > 0");
-        // 将排行榜存入redis
-        sparkConfig.getRankDays().forEach(day -> redisRankService.addRankToRedisByDay(getDayRankByDays(sparkSession, currentData, time.minusDays(day)), day));
-        jsc.close();
+    public void dayRank(LocalDate date) {
+        POOLS.execute(new Task(date));
     }
 }

@@ -19,5 +19,11 @@ public interface RedisRankService {
      */
     void addRankToRedisByDay(Map<String, List<DepreciateDO>> data, int day);
 
+    /**
+     *
+     * @param category
+     * @param day
+     * @return
+     */
     Optional<List<DepreciateDTO>> getRandFromRedisByCategoryAndDay(String category, int day);
 }

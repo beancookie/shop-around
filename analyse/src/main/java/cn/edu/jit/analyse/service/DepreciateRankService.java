@@ -1,6 +1,6 @@
 package cn.edu.jit.analyse.service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * @author LuZhong
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public interface DepreciateRankService {
     /**
      * 利用spark分析指定日期的降价额度排行榜
-     * @param time
+     * @param date
      */
-    void dayRank(LocalDateTime time);
+    void dayRank(LocalDate date);
 }

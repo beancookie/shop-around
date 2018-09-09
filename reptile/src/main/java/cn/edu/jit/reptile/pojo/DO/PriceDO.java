@@ -1,11 +1,11 @@
 package cn.edu.jit.reptile.pojo.DO;
 
+import cn.edu.jit.reptile.config.Contents;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 
 /**
  * @author LuZhong
@@ -14,12 +14,11 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PriceDO implements Comparable<PriceDO> {
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH");
     private Double price;
-    private String time;
+    private String date;
 
     @Override
     public int compareTo(PriceDO other) {
-        return LocalDateTime.from(FORMATTER.parse(this.time)).isBefore(LocalDateTime.from(FORMATTER.parse(other.time))) ? -1 : 1;
+        return LocalDate.from(Contents.FORMATTER.parse(this.date)).isBefore(LocalDate.from(Contents.FORMATTER.parse(other.date))) ? -1 : 1;
     }
 }

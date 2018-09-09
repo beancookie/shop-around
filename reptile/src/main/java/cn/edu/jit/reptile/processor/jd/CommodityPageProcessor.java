@@ -1,5 +1,6 @@
 package cn.edu.jit.reptile.processor.jd;
 
+import cn.edu.jit.reptile.config.Contents;
 import cn.edu.jit.reptile.config.SpiderConfig;
 import cn.edu.jit.reptile.pojo.DO.CommodityDO;
 import cn.edu.jit.reptile.pojo.DO.PriceDO;
@@ -30,7 +31,6 @@ import java.util.List;
 @Slf4j
 @RefreshScope
 public class CommodityPageProcessor implements PageProcessor {
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     public static final String FILE_KEY = "commodities";
     private static final String PROTOCOL = "https:";
     private static final String URL_REGEX = "https://list.jd.com/list.html\\?cat=.*&page=\\d+.*";
@@ -84,7 +84,7 @@ public class CommodityPageProcessor implements PageProcessor {
         // 通过异步接口获取商品店铺
         Iterator<ShopDTO> shopIterator = commodityService.getShopNamesByIds(shopIds).iterator();
         // 当前日期
-        String nowDateTime = FORMATTER.format(LocalDateTime.now());
+        String nowDate = Contents.FORMATTER.format(LocalDateTime.now().minusDays(3));
         // 有序列表设置价格
         resultCommodities.forEach(commodity -> {
             if (priceIterator.hasNext()) {
@@ -93,7 +93,7 @@ public class CommodityPageProcessor implements PageProcessor {
                 String id = commodity.get_id();
                 // 价格id和商品id相同时设置价格
                 if (id.equals(priceId)) {
-                    commodity.addPrice(new PriceDO(priceDTO.getP(), nowDateTime));
+                    commodity.addPrice(new PriceDO(priceDTO.getP(), nowDate));
                 }
             }
             if (shopIterator.hasNext()) {

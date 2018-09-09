@@ -1,4 +1,4 @@
-package cn.edu.jit.analyse.config;
+package cn.edu.jit.reptile.config;
 
 import java.time.format.DateTimeFormatter;
 

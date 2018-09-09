@@ -30,12 +30,16 @@ public class RedisRankServiceImpl implements RedisRankService {
     @Override
     public void addRankToRedisByDay(Map<String, List<DepreciateDO>> data, int day) {
         data.forEach((category, depreciates) -> {
+            // redis中的key
             String key = "rank:" + category + ":" + day;
             TreeSet<DepreciateDO> depreciateSet = new TreeSet<>();
+            // 去除redis中的旧排行榜
             depreciateSet.addAll(redisTemplate.opsForZSet().range(key, 0, -1));
+            // 将新数据加入排行榜
             depreciateSet.addAll(depreciates);
             AtomicInteger index = new AtomicInteger();
             depreciateSet.forEach(depreciate -> {
+                // 只存储指定数量的排行榜数据
                 if (index.get() < sparkConfig.getRankNumber()) {
                     redisTemplate.opsForZSet().add(key, depreciate, index.getAndIncrement());
                 }
@@ -45,6 +49,7 @@ public class RedisRankServiceImpl implements RedisRankService {
 
     @Override
     public Optional<List<DepreciateDTO>> getRandFromRedisByCategoryAndDay(String category, int day) {
+        // redis模糊查询keys
         StringBuilder pattern = new StringBuilder();
         pattern.append("*rank:");
         if (null != category && !"".equals(category)) {
@@ -56,8 +61,10 @@ public class RedisRankServiceImpl implements RedisRankService {
         Set<String> keys = stringRedisTemplate.keys(pattern.toString());
         List<DepreciateDTO> ranks = new ArrayList<>();
         keys.forEach(key -> {
+            // 获取商品类别
             String curCategory = key.substring(key.indexOf(":") + 1, key.lastIndexOf(":"));
             TreeSet<DepreciateDO> depreciateSet = new TreeSet<>();
+            // 查询对应类别的商品排行榜
             depreciateSet.addAll(redisTemplate.opsForZSet().range(key.substring(key.indexOf("rank")), 0, -1));
             ranks.add(new DepreciateDTO(curCategory, depreciateSet));
         });

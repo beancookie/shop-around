@@ -38,7 +38,7 @@ public class DepreciateRankServiceImpl implements DepreciateRankService {
     }
 
     /**
-     * 常见SparkSession
+     * 创建SparkSession
      * @return
      */
     private SparkSession createSparkSession() {

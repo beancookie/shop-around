@@ -30,7 +30,7 @@ import java.util.List;
 @Slf4j
 @RefreshScope
 public class CommodityPageProcessor implements PageProcessor {
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     public static final String FILE_KEY = "commodities";
     private static final String PROTOCOL = "https:";
     private static final String URL_REGEX = "https://list.jd.com/list.html\\?cat=.*&page=\\d+.*";
@@ -84,7 +84,7 @@ public class CommodityPageProcessor implements PageProcessor {
         // 通过异步接口获取商品店铺
         Iterator<ShopDTO> shopIterator = commodityService.getShopNamesByIds(shopIds).iterator();
         // 当前日期
-        String nowDateTime = FORMATTER.format(LocalDateTime.now().plusDays(1));
+        String nowDateTime = FORMATTER.format(LocalDateTime.now());
         // 有序列表设置价格
         resultCommodities.forEach(commodity -> {
             if (priceIterator.hasNext()) {

@@ -1,4 +1,4 @@
-package cn.edu.jit.analyse.controller;
+package cn.edu.jit.reptile.controller;
 
 import cn.edu.jit.reptile.pojo.DO.CommodityDO;
 import cn.edu.jit.reptile.service.CommodityService;

@@ -1,7 +1,9 @@
 package cn.edu.jit.reptile.service.impl;
 
+import cn.edu.jit.reptile.pojo.DO.CommodityDO;
 import cn.edu.jit.reptile.pojo.DTO.PriceDTO;
 import cn.edu.jit.reptile.pojo.DTO.ShopDTO;
+import cn.edu.jit.reptile.repository.CommodityRepository;
 import cn.edu.jit.reptile.service.CommodityService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -39,6 +41,9 @@ public class CommodityServiceImpl implements CommodityService {
     private String priceUrl;
     @Value("${shop-url}")
     private String shopUrl;
+
+    @Autowired
+    private CommodityRepository commodityRepository;
 
     @Autowired
     private Gson gson;
@@ -88,5 +93,10 @@ public class CommodityServiceImpl implements CommodityService {
         url.replace(url.length() - 1, url.length(), "");
         Optional<List<ShopDTO>> result = Optional.ofNullable(responseToDTO(url.toString(), new TypeToken<LinkedList<ShopDTO>>(){}.getType()));
         return result.orElse(Collections.emptyList());
+    }
+
+    @Override
+    public Optional<CommodityDO> findCommodityById(String id) {
+        return commodityRepository.findById(id);
     }
 }

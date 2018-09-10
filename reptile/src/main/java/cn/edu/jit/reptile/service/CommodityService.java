@@ -12,18 +12,23 @@ import java.util.Optional;
  */
 public interface CommodityService {
     /**
-     *
+     * 根据商品id获取商品价格
      * @param ids
      * @return
      */
     List<PriceDTO> getPricesByIds(List ids);
 
     /**
-     *
+     * 根据店铺id获取店铺名称
      * @param shopIds
      * @return
      */
     List<ShopDTO> getShopNamesByIds(List shopIds);
 
+    /**
+     * 根据商品id查询商品
+     * @param id
+     * @return
+     */
     Optional<CommodityDO> findCommodityById(String id);
 }

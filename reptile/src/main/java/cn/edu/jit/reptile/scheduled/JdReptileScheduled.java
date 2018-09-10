@@ -3,8 +3,8 @@ package cn.edu.jit.reptile.scheduled;
 import cn.edu.jit.reptile.config.SpiderConfig;
 import cn.edu.jit.reptile.pipeline.CommodityPipeline;
 import cn.edu.jit.reptile.processor.jd.CommodityPageProcessor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Site;
@@ -15,6 +15,7 @@ import us.codecraft.webmagic.scheduler.RedisScheduler;
  * @author LuZhong
  */
 @Component
+@Slf4j
 public class JdReptileScheduled {
     @Autowired
     private SpiderConfig spiderConfig;

@@ -19,7 +19,6 @@ import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -84,7 +83,7 @@ public class CommodityPageProcessor implements PageProcessor {
         // 通过异步接口获取商品店铺
         Iterator<ShopDTO> shopIterator = commodityService.getShopNamesByIds(shopIds).iterator();
         // 当前日期
-        String nowDate = Contents.FORMATTER.format(LocalDateTime.now().minusDays(3));
+        String nowDate = Contents.FORMATTER.format(LocalDateTime.now());
         // 有序列表设置价格
         resultCommodities.forEach(commodity -> {
             if (priceIterator.hasNext()) {

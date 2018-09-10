@@ -34,8 +34,9 @@
         </dependencies>
     </dependencyManagement>
     <modules>
-        <module>eureka</module>
+        <module>analyse</module>
         <module>config</module>
+        <module>eureka</module>
         <module>reptile</module>
     </modules>
 </project>

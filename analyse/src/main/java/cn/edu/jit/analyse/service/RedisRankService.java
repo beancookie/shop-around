@@ -6,7 +6,6 @@ import cn.edu.jit.analyse.pojo.DTO.DepreciateDTO;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * @author LuZhong
@@ -14,12 +13,14 @@ import java.util.Set;
 public interface RedisRankService {
     /**
      * 将降价排行榜存到redis的有序集合中，其中key为 商品类别:间隔时间
+     *
      * @param data
-     * @param day 间隔时间
+     * @param day  间隔时间
      */
     void addRankToRedisByDay(Map<String, List<DepreciateDO>> data, int day);
 
     /**
+     * 根据类别名称和天数查询redis中的排行榜
      *
      * @param category
      * @param day

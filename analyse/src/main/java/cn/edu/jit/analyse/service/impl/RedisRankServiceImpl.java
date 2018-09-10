@@ -24,6 +24,7 @@ public class RedisRankServiceImpl implements RedisRankService {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 

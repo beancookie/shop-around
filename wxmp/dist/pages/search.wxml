@@ -1,0 +1,27 @@
+
+  <view class="container">
+    <wxc-panel title="商品链接">
+      <textarea auto-focus="true" bindblur="textareaEidt" hint="300" value="{{searchContent}}" placeholder="{{hint}}"/>
+    </wxc-panel>
+    <wxc-flex main="center">
+      <view class="button-wrap">
+        <wxc-button bindtap="toComponent" type="beauty" value="{{search}}" data-wpytocomponent-a="history">
+        </wxc-button>
+      </view>
+      <view class="button-wrap">
+        <wxc-button type="secondary" plain="true" value="{{reset}}" bindtap="doReset">
+        </wxc-button>
+      </view>
+    </wxc-flex>
+    <wxc-panel title="历史记录">
+      <view class="list-item">
+        <wxc-list  wx:for="{{searchList}}" wx:key="index" class="item" arrow="{{false}}" desc="{{item.desc}}" mode="{{index == searchList.length-1 ? 'none': 'normal'}}" icon="{{item.icon}}">
+      </wxc-list>
+    </view>
+    </wxc-panel>
+    <wxc-flex class="clean" main="center">
+      <wxc-dialog class="wxc-dialog" title="确定清空所有历史记录?" confirm-text="确定" cancel-text="取消" bindconfirm="onConfirm" bindcancel="onCancel"/>
+      <wxc-button type="info" plain="true" bindtap="doClean" value="{{clean}}"/>
+    </wxc-flex>
+    <wxc-loadmore is-end="{{isEnd}}" text="～我是有底线的～" icon="{{true}}"/>
+  </view>

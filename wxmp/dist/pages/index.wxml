@@ -1,4 +1,0 @@
-
-  <veiw class="flex flex_column font_normal">
-    <wxc-button type="beauty">{{ btn }}</wxc-button>
-  </veiw>

@@ -1,0 +1,119 @@
+<style lang="less">
+  .button-wrap {
+    margin: 20rpx 30rpx;
+    float: left;
+  }
+  .clean {
+    margin: 10rpx;
+  }
+  .container {
+    margin: 10rpx;
+  }
+</style>
+
+<template>
+  <view class="container">
+    <wxc-panel title="商品链接">
+      <textarea auto-focus="true" bindblur="textareaEidt" hint="300" value="{{searchContent}}" placeholder="{{hint}}" />
+    </wxc-panel>
+    <wxc-flex main="center">
+      <view class="button-wrap">
+        <wxc-button 
+          @tap="toComponent(history)" 
+          type="beauty" 
+          value="{{search}}">
+        </wxc-button>
+      </view>
+      <view class="button-wrap">
+        <wxc-button 
+          type="secondary" 
+          plain="true" 
+          value="{{reset}}"
+          @tap="doReset">
+        </wxc-button>
+      </view>
+    </wxc-flex>
+    <wxc-panel title="历史记录">
+      <view class="list-item">
+        <wxc-list
+          wx:for="{{searchList}}"
+          wx:key="index"
+          class="item"
+          arrow="{{false}}"
+          desc="{{item.desc}}"
+          mode="{{index == searchList.length-1 ? 'none': 'normal'}}"
+          icon="{{item.icon}}">
+      </wxc-list>
+    </view>
+    </wxc-panel>
+    <wxc-flex class="clean" main="center">
+      <wxc-dialog class="wxc-dialog" title="确定清空所有历史记录?" confirm-text="确定" cancel-text="取消" bindconfirm="onConfirm" bindcancel="onCancel"></wxc-dialog>
+      <wxc-button type="info" plain="true" @tap="doClean" value="{{clean}}"></wxc-button>
+    </wxc-flex>
+    <wxc-loadmore is-end="{{isEnd}}" text="～我是有底线的～" icon="{{true}}"></wxc-loadmore>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '查询商品历史价格',
+      usingComponents: {
+        'wxc-button': '../packages/@minui/wxc-button/dist/index',
+        'wxc-flex': '../packages/@minui/wxc-flex/dist/index',
+        'wxc-panel': '../packages/@minui/wxc-panel/dist/index',
+        'wxc-tab': '../packages/@minui/wxc-tab/dist/index',
+        'wxc-tab-panel': '../packages/@minui/wxc-tab/dist/panel',
+        'wxc-list': '../packages/@minui/wxc-list/dist/index',
+        'wxc-loadmore': '../packages/@minui/wxc-loadmore/dist/index',
+        'wxc-dialog': '../packages/@minui/wxc-dialog/dist/index',
+        'wxc-icon': '../packages/@minui/wxc-icon/dist/index'
+      }
+    }
+    data = {
+      hint: '请将购物App分享的链接粘贴到此处',
+      search: '查询历史价格',
+      reset: '重置',
+      clean: '清空历史记录',
+      searchContent: '',
+      searchList: [],
+      isEnd: true
+    }
+    methods = {
+      toComponent(name) {
+        wx.setStorageSync('$searchHistory', this.searchList)
+        this.$navigate(`./${name}`)
+      },
+      textareaEidt(textarea) {
+        let searchContent = textarea.detail.value
+        if (searchContent && searchContent != '') {
+          this.searchList.push({
+            desc: searchContent,
+            icon: 'star'
+          })
+        }
+      },
+      doClean() {
+        let dialogComponent = this.$wxpage.selectComponent('.wxc-dialog')
+        dialogComponent && dialogComponent.show();
+      },
+      onConfirm () {
+        let dialogComponent = this.$wxpage.selectComponent('.wxc-dialog')
+        dialogComponent && dialogComponent.hide();
+        wx.removeStorageSync('$searchHistory')
+        this.searchList = []
+      },
+      onCancel () {
+        let dialogComponent = this.$wxpage.selectComponent('.wxc-dialog')
+        dialogComponent && dialogComponent.hide();
+      }
+    }
+    onLoad() {
+      let searchList = wx.getStorageSync('$searchHistory')
+      if (searchList) {
+        this.searchList = searchList
+      }
+    }
+  }
+</script>

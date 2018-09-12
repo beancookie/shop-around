@@ -1,0 +1,26 @@
+<style lang="less">
+  .button-wrap {
+    margin: 20rpx 30rpx;
+    float: left;
+  }
+</style>
+
+<template>
+  <view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '降价排行榜',
+      usingComponents: {
+      }
+    }
+    data = {
+    }
+    methods = {
+    }
+  }
+</script>

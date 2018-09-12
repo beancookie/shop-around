@@ -1,0 +1,30 @@
+
+  <view class="container">
+    <wxc-panel title="商品链接">
+      <wxc-flex>
+        <wxc-avatar class="picture" mold="square" src="https://img10.360buyimg.com/n7/jfs/t18157/222/1822300674/231514/6c179af8/5ad87390N086a3c91.jpg"/>
+        <wxc-flex dir="top">
+          <view>
+            <text>荣耀10 GT游戏加速 AIS手持夜景 6GB+6</text>
+          </view>
+          <view class="commodity">
+            <wxc-label type="fill" type-color="#FF4040">京东</wxc-label>
+            <wxc-price class="price" value="39.00" decimal="small">
+            </wxc-price>
+          </view>
+          <wxc-button type="success">去购买</wxc-button>
+        </wxc-flex>
+      </wxc-flex>
+    </wxc-panel>
+    <wxc-panel title="价格走势">
+      <view class="price-wrap">
+        <wxc-label type="fill" type-color="#FF4040">历史最低价:</wxc-label>
+        <wxc-price class="price" value="39.00" decimal="small">
+        </wxc-price>
+      </view>
+      <view class="line-chart">
+        <ec-canvas id="mychart-dom-bar" canvas-id="mychart-bar" ec="{{ec}}"  bind:init="echartInit">
+        </ec-canvas>
+      </view>
+    </wxc-panel>
+  </view>

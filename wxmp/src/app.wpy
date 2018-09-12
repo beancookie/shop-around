@@ -68,13 +68,28 @@
   export default class extends wepy.app {
     config = {
       pages: [
-        'pages/index'
+        'pages/search',
+        'pages/history',
+        'pages/rank'
       ],
       window: {
         backgroundTextStyle: 'light',
-        navigationBarBackgroundColor: '#fff',
+        navigationBarBackgroundColor: '#FF6A6A',
         navigationBarTitleText: 'WeChat',
         navigationBarTextStyle: 'black'
+      },
+      tabBar: {
+        list: [{
+          pagePath: 'pages/rank',
+          text: '降价排行榜',
+          iconPath: 'images/rank.png',
+          selectedIconPath: 'images/rank-selected.png'
+        }, {
+          pagePath: 'pages/search',
+          text: '查询历史价格',
+          iconPath: 'images/history.png',
+          selectedIconPath: 'images/history-selected.png'
+        }]
       }
     }
 

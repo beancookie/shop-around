@@ -1,9 +1,9 @@
 server:
-  port: 7003
+  port: 7004
 
 spring:
   application:
-    name: analyse
+    name: zuul
   cloud:
     config:
       discovery:
@@ -15,3 +15,4 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8888/eureka/
+

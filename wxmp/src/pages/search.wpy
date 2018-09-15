@@ -1,7 +1,6 @@
 <style lang="less">
   .button-wrap {
     margin: 20rpx 30rpx;
-    float: left;
   }
   .clean {
     margin: 10rpx;
@@ -14,23 +13,21 @@
 <template>
   <view class="container">
     <wxc-panel title="商品链接">
-      <textarea auto-focus="true" bindblur="textareaEidt" hint="300" value="{{searchContent}}" placeholder="{{hint}}" />
+      <textarea 
+        id="textarea"
+        auto-focus="true" 
+        bindblur="eidtTextarea" 
+        hint="300" 
+        value="{{searchContent}}" 
+        placeholder="{{hint}}" />
     </wxc-panel>
     <wxc-flex main="center">
       <view class="button-wrap">
         <wxc-button 
-          @tap="toComponent(history)" 
+          @tap="toComponent()" 
           type="beauty" 
-          value="{{search}}">
-        </wxc-button>
-      </view>
-      <view class="button-wrap">
-        <wxc-button 
-          type="secondary" 
-          plain="true" 
-          value="{{reset}}"
-          @tap="doReset">
-        </wxc-button>
+          value="{{search}}"
+        />
       </view>
     </wxc-flex>
     <wxc-panel title="历史记录">
@@ -42,21 +39,41 @@
           arrow="{{false}}"
           desc="{{item.desc}}"
           mode="{{index == searchList.length-1 ? 'none': 'normal'}}"
-          icon="{{item.icon}}">
-      </wxc-list>
+          icon="{{item.icon}}"
+        />
     </view>
     </wxc-panel>
     <wxc-flex class="clean" main="center">
-      <wxc-dialog class="wxc-dialog" title="确定清空所有历史记录?" confirm-text="确定" cancel-text="取消" bindconfirm="onConfirm" bindcancel="onCancel"></wxc-dialog>
-      <wxc-button type="info" plain="true" @tap="doClean" value="{{clean}}"></wxc-button>
+      <wxc-dialog 
+        class="wxc-dialog" 
+        title="确定清空所有历史记录?" 
+        confirm-text="确定" 
+        cancel-text="取消" 
+        bindconfirm="onConfirm" 
+        bindcancel="onCancel"
+      />
+      <wxc-button 
+        type="info" 
+        plain="true" 
+        @tap="doClean()" 
+        value="{{clean}}"
+      />
     </wxc-flex>
-    <wxc-loadmore is-end="{{isEnd}}" text="～我是有底线的～" icon="{{true}}"></wxc-loadmore>
+    <wxc-loadmore 
+      is-end="{{isEnd}}" 
+      text="～我是有底线的～" 
+      icon="{{true}}"
+    />
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  export default class Index extends wepy.page {
+  import {
+    COMMODITY,
+    SEARCH_HISTORY
+  } from '../config/constant'
+  export default class Search extends wepy.page {
     config = {
       navigationBarTitleText: '查询商品历史价格',
       usingComponents: {
@@ -74,43 +91,57 @@
     data = {
       hint: '请将购物App分享的链接粘贴到此处',
       search: '查询历史价格',
-      reset: '重置',
       clean: '清空历史记录',
       searchContent: '',
       searchList: [],
       isEnd: true
     }
     methods = {
-      toComponent(name) {
-        wx.setStorageSync('$searchHistory', this.searchList)
-        this.$navigate(`./${name}`)
+      toComponent() {
+        if (this.searchContent && this.searchContent != '') {
+          this.$navigate(`./history`)
+        }
       },
-      textareaEidt(textarea) {
+      eidtTextarea(textarea) {
+        let that = this
         let searchContent = textarea.detail.value
         if (searchContent && searchContent != '') {
-          this.searchList.push({
-            desc: searchContent,
-            icon: 'star'
+          that.searchContent = searchContent
+          wx.request({
+            url: 'http://localhost:7004/reptile/commodity/url', 
+            data: {
+              url: searchContent
+            },
+            success(res) {
+              let data = res.data
+              wx.setStorageSync(COMMODITY, data)
+              that.$data.searchList.push({
+                desc: data.name,
+                icon: 'star'
+              })
+              wx.setStorageSync(SEARCH_HISTORY, that.$data.searchList)
+              that.$navigate(`./history`)
+            }
           })
         }
       },
       doClean() {
         let dialogComponent = this.$wxpage.selectComponent('.wxc-dialog')
-        dialogComponent && dialogComponent.show();
+        dialogComponent && dialogComponent.show()
       },
       onConfirm () {
-        let dialogComponent = this.$wxpage.selectComponent('.wxc-dialog')
-        dialogComponent && dialogComponent.hide();
-        wx.removeStorageSync('$searchHistory')
+        wx.removeStorageSync(SEARCH_HISTORY)
         this.searchList = []
+        let dialogComponent = this.$wxpage.selectComponent('.wxc-dialog')
+        dialogComponent && dialogComponent.hide()
       },
       onCancel () {
         let dialogComponent = this.$wxpage.selectComponent('.wxc-dialog')
-        dialogComponent && dialogComponent.hide();
+        dialogComponent && dialogComponent.hide()
       }
     }
     onLoad() {
-      let searchList = wx.getStorageSync('$searchHistory')
+      let searchList = wx.getStorageSync(SEARCH_HISTORY)
       if (searchList) {
         this.searchList = searchList
       }

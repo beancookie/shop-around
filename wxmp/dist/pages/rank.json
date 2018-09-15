@@ -1,1 +1,1 @@
-{"navigationBarTitleText":"降价排行榜","usingComponents":{}}
+{"navigationBarTitleText":"降价排行榜","usingComponents":{"van-tree-select":"../packages/tree-select/index","wxc-search":"../packages/@minui/wxc-search/dist/index"}}

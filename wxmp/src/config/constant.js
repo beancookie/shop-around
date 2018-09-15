@@ -1,0 +1,6 @@
+export const SEARCH_HISTORY = '$searchHistory'
+export const COMMODITY = '$commodity'
+export const RANK = '$rank'
+export const DEPRECIATE = '$depreciate'
+export const CATEGORY = '$category'
+export const DATE = '$date'

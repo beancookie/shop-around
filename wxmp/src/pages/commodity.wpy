@@ -1,0 +1,158 @@
+<style lang="less">
+  .image-wrap {
+    width: 47%;
+    padding-bottom: 10rpx;
+  }
+  .image-wrap image {
+    width: 360rpx;
+    height: 360rpx;
+  }
+  .name {
+    font-size: 18rpx;
+    margin-bottom: 10rpx;
+  }
+  .label {
+    margin-right: 20rpx;
+  }
+  .price {
+    font-size: 36rpx;
+    font-weight: bold;
+    color: #ff4422;
+    margin-right: 10rpx;
+  }
+</style>
+
+<template>
+  <view>
+    <wxc-tab
+      bind:tabchange="onTabChange"
+      default-index="{{0}}"
+      active-text-color="#108ee9"
+      active-line-color="#108ee9"
+      component-id="store"
+      animate="{{true}}"
+    >
+      <wxc-tab-panel
+        wx:for="{{tabs}}"
+        wx:for-item="tab"
+        wx:key="{{tab.index}}"
+        tab-index="{{index}}"
+        component-id="store"
+        label="{{tab.title}}"
+      >
+        <wxc-flex wrap="wrap" main="between">
+          <wxc-panel 
+            border="{{false}}" 
+            class="image-wrap"
+            wx:for="{{depreciates}}"
+            wx:key="{{depreciate.rank}}"
+            wx:for-item="depreciate">
+            <view>
+              <image mode="aspectFill" src="{{depreciate.imgUrl}}"/>
+              <wxc-flex wrap="wrap" main="center">
+                <text class="name">{{depreciate.name}}</text>
+              </wxc-flex>
+              <wxc-flex wrap="wrap" main="center">
+                <wxc-label class="label" type="corner" type-color="#FF8C00">Top{{depreciate.rank}}</wxc-label>
+                <text class="price">直降</text>
+                <wxc-price class="price" icon="sub">{{depreciate.price}}</wxc-price>
+              </wxc-flex>
+            </view>
+          </wxc-panel>
+        </wxc-flex>
+      </wxc-tab-panel>
+    </wxc-tab>
+    <wxc-loadmore 
+      is-end="{{isEnd}}" 
+      text="{{loadText}}" 
+      icon="{{true}}"
+    />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import {
+    RANK,
+    DAY,
+    CATEGORY
+  } from '../config/constant'
+  export default class Rank extends wepy.page {
+    config = {
+      navigationBarTitleText: '降价排行榜',
+      usingComponents: {
+        'wxc-flex': '../packages/@minui/wxc-flex/dist/index',
+        'wxc-label': '../packages/@minui/wxc-label/dist/index',
+        'wxc-tab': '../packages/@minui/wxc-tab/dist/index',
+        'wxc-tab-panel': '../packages/@minui/wxc-tab/dist/panel',
+        'wxc-price': '../packages/@minui/wxc-price/dist/index',
+        'wxc-loadmore': '../packages/@minui/wxc-loadmore/dist/index',
+        'wxc-wxc-loading': '../packages/@minui/wxc-loading/dist/index',
+        'wxc-panel': '../packages/@minui/wxc-panel/dist/index'
+      }
+    }
+    data = {
+      isEnd: false,
+      days: [1, 3, 7, 30],
+      loadText: "~加载中~",
+      tabs: [
+        {title: '一天'},
+        {title: '三天'},
+        {title: '一周'},
+        {title: '一月'}
+      ],
+      depreciates: []
+    }
+    onTabChange({detail}) {
+      let day = this.days[detail.key]
+      let ranks = wx.getStorageSync(RANK + ":" + day)
+      let category = wx.getStorageSync(CATEGORY)
+      if (ranks) {
+        ranks.forEach(e => {
+          if (e.category == category) {
+            let index = 1
+            e.depreciateDOList.forEach(ee => {
+              this.depreciates.push(
+                {rank: index++, name: ee.name, price: ee.depreciate, imgUrl: ee.imgUrl}
+              )
+            })
+          }
+        })
+      } else {
+        this.depreciates = []
+        wx.request({
+          url: 'http://localhost:7004/analyse/rank', 
+          data: {
+            day: day
+          },
+          success(res) {
+            let data = res.data
+            wx.setStorageSync(RANK + ":" + day, data)
+          }
+        })
+      }
+      console.log(day)
+      console.log(this.depreciates)
+      
+    } 
+    onLoad() {
+      let ranks = wx.getStorageSync(RANK + ":1")
+      if (!ranks) {
+        wx.request({
+          url: 'http://localhost:7004/analyse/rank', 
+          data: {
+            day: 1
+          },
+          success(res) {
+            let data = res.data
+            wx.setStorageSync(RANK + ":1", data)
+          }
+        })
+      }
+    }
+    onShow() {
+      this.isEnd = true
+      this.loadText = '~没有更多了~'
+    }
+  }
+</script>

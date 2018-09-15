@@ -3,6 +3,9 @@
     width: 100%;
     height: 700rpx;
   }
+  .name {
+    font-size: 18rpx;
+  }
   .price-wrap {
     position: relative;
     padding-left: 60%;
@@ -29,20 +32,20 @@
   <view class="container">
     <wxc-panel title="商品链接">
       <wxc-flex>
-        <wxc-avatar class="picture" mold="square" src="https://img10.360buyimg.com/n7/jfs/t18157/222/1822300674/231514/6c179af8/5ad87390N086a3c91.jpg"></wxc-avatar>
+        <wxc-avatar class="picture" mold="square" src="{{commodity.imgUrl}}"></wxc-avatar>
         <wxc-flex dir="top">
           <view>
-            <text>荣耀10 GT游戏加速 AIS手持夜景 6GB+6</text>
+            <text class="name">{{commodity.name}}</text>
           </view>
           <view class="commodity">
             <wxc-label type="fill" type-color="#FF4040">京东</wxc-label>
             <wxc-price 
               class="price" 
-              value="39.00" 
+              value="{{currentPrice}}" 
               decimal="small">
             </wxc-price>
           </view>
-          <wxc-button type="success">去购买</wxc-button>
+          <wxc-button size="small" type="success">去购买</wxc-button>
         </wxc-flex>
       </wxc-flex>
     </wxc-panel>
@@ -51,7 +54,7 @@
         <wxc-label type="fill" type-color="#FF4040">历史最低价:</wxc-label>
         <wxc-price 
           class="price" 
-          value="39.00" 
+          value="{{lowestPrice}}" 
           decimal="small">
         </wxc-price>
       </view>
@@ -69,7 +72,10 @@
 
 <script>
   import wepy from 'wepy'
-  import echarts from '../ec-canvas/echarts.js'
+  import echarts from '../ec-canvas/echarts'
+  import {
+    COMMODITY
+  } from '../config/constant'
   export default class Index extends wepy.page {
     config = {
       navigationBarTitleText: '商品历史价格',
@@ -85,6 +91,9 @@
       }
     }
     data = {
+      currentPrice: 0,
+      lowestPrice: 0,
+      commodity: undefined,
       ec: {}
     }
     methods = {
@@ -93,7 +102,21 @@
       }
     }
     initChart(canvas, width, height) {
-      
+      let prices = []
+      let dates = []
+      if (this.commodity) {
+        let lowestPrice = 2 << 20
+        this.commodity.prices.forEach(e => {
+          if (e.price < lowestPrice) {
+            lowestPrice = e.price
+          }
+          prices.push(e.price)
+          dates.push(e.date)
+        })
+        this.lowestPrice = lowestPrice
+        this.currentPrice = prices[prices.length - 1]
+      }
+
       const chart = echarts.init(canvas, null, {
         width: width,
         height: height
@@ -122,8 +145,7 @@
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-          // show: false
+          data: dates,
         },
         yAxis: {
           x: 'center',
@@ -133,17 +155,22 @@
               type: 'dashed'
             }
           }
-          // show: false
         },
         series: [{
           name: '京东',
           type: 'line',
           smooth: true,
-          data: [18, 36, 65, 30, 78, 40, 200]
+          data: prices
         }]
       };
       chart.setOption(option)
       return chart
+    }
+    onLoad() {
+      let commodity = wx.getStorageSync(COMMODITY)
+      if (commodity) {
+        this.commodity = commodity
+      }
     }
   }
 </script>

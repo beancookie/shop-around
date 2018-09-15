@@ -70,6 +70,7 @@
       pages: [
         'pages/search',
         'pages/history',
+        'pages/commodity',
         'pages/rank'
       ],
       window: {

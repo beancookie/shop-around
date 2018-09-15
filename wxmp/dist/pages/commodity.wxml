@@ -1,0 +1,23 @@
+
+  <view>
+    <wxc-tab  bind:tabchange="onTabChange" default-index="{{0}}" active-text-color="#108ee9" active-line-color="#108ee9" component-id="store" animate="{{true}}">
+      <wxc-tab-panel  wx:for="{{tabs}}" wx:for-item="tab" wx:key="{{tab.index}}" tab-index="{{index}}" component-id="store" label="{{tab.title}}">
+        <wxc-flex wrap="wrap" main="between">
+          <wxc-panel border="{{false}}" class="image-wrap" wx:for="{{depreciates}}" wx:key="{{depreciate.rank}}" wx:for-item="depreciate">
+            <view>
+              <image mode="aspectFill" src="{{depreciate.imgUrl}}"/>
+              <wxc-flex wrap="wrap" main="center">
+                <text class="name">{{depreciate.name}}</text>
+              </wxc-flex>
+              <wxc-flex wrap="wrap" main="center">
+                <wxc-label class="label" type="corner" type-color="#FF8C00">Top{{depreciate.rank}}</wxc-label>
+                <text class="price">直降</text>
+                <wxc-price class="price" icon="sub">{{depreciate.price}}</wxc-price>
+              </wxc-flex>
+            </view>
+          </wxc-panel>
+        </wxc-flex>
+      </wxc-tab-panel>
+    </wxc-tab>
+    <wxc-loadmore is-end="{{isEnd}}" text="{{loadText}}" icon="{{true}}"/>
+  </view>

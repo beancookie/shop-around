@@ -1,26 +1,97 @@
 <style lang="less">
-  .button-wrap {
-    margin: 20rpx 30rpx;
-    float: left;
-  }
+.search-wrap {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 90rpx;
+  color: #fff;
+  background: #8B658B;
+}
+.search {
+  flex-grow: 1;
+  margin: 15rpx 24rpx;
+}
 </style>
+
 
 <template>
   <view>
+    <view class="search-wrap">
+      <wxc-search 
+        class="search" 
+        showClear="{{false}}" 
+        bg-color="rgba(255, 255, 255, 0.18)" 
+        color="#fff" 
+        icon-color="#cacff1" 
+        ph-color="#cacff1" 
+        placeholder="请输入 商品类别"
+      />
+    </view>
+
+    <van-tree-select 
+      items="{{items}}" 
+      main-active-index="{{mainActiveIndex}}" 
+      active-id="{{activeId}}" 
+      bind:click-nav="onClickNav" 
+      bind:click-item="onClickItem" 
+    />
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  export default class Index extends wepy.page {
+  import {
+    children
+  } from '../config/tree'
+  import {
+    RANK,
+    CATEGORY,
+    DATE,
+  } from '../config/constant'
+  export default class Rank extends wepy.page {
     config = {
       navigationBarTitleText: '降价排行榜',
       usingComponents: {
+        "van-tree-select": "../packages/tree-select/index",
+        'wxc-search': '../packages/@minui/wxc-search/dist/index'
       }
     }
     data = {
+      items: [
+        {text: '京东', children: children},
+        {text: '天猫'},
+        {text: '苏宁易购'}
+      ],
+      mainActiveIndex: 0,
+      activeId: 1001
     }
-    methods = {
+    onClickNav({detail}) {
+      this.mainActiveIndex = detail.index || 0
+    }
+    onClickItem({detail}) {
+      let activeId = detail.id || 0
+      this.activeId = activeId
+      let category = ''
+      children.forEach(e => {
+        if (activeId == e.id) {
+          category = e.text
+          wx.setStorageSync(CATEGORY, category)
+        }  
+      })
+      this.$navigate(`./commodity`)
+    }
+    getNow() {
+      let now = new Date()
+      let nowDate = now.getFullYear() + '' + now.getMonth() + '' + now.getDay()
+      return nowDate
+    }
+    onLoad() {
+      let nowDate = this.getNow()
+      let date = wx.getStorageSync(DATE)
+      if (date || date != nowDate) {
+        wx.clearStorageSync()
+        wx.setStorageSync(DATE, nowDate)
+      }
     }
   }
 </script>

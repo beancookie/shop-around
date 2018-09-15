@@ -1,3 +1,8 @@
 
   <view>
+    <view class="search-wrap">
+      <wxc-search class="search" showClear="{{false}}" bg-color="rgba(255, 255, 255, 0.18)" color="#fff" icon-color="#cacff1" ph-color="#cacff1" placeholder="请输入 商品类别"/>
+    </view>
+
+    <van-tree-select items="{{items}}" main-active-index="{{mainActiveIndex}}" active-id="{{activeId}}"  bind:click-nav="onClickNav" bind:click-item="onClickItem"/>
   </view>

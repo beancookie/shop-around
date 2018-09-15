@@ -30,9 +30,11 @@
     "@minui/wxc-popup": "^1.0.9",
     "@minui/wxc-price": "^1.0.8",
     "@minui/wxc-progress": "^1.0.5",
+    "@minui/wxc-search": "^1.0.1",
     "@minui/wxc-steps": "^1.0.7",
     "@minui/wxc-tab": "^1.0.8",
     "@minui/wxc-toast": "^1.0.9",
+    "vant-weapp": "^0.3.2",
     "wepy": "^1.7.2"
   },
   "devDependencies": {

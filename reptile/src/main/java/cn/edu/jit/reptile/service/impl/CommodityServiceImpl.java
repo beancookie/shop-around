@@ -1,6 +1,7 @@
 package cn.edu.jit.reptile.service.impl;
 
 import cn.edu.jit.reptile.pojo.DO.CommodityDO;
+import cn.edu.jit.reptile.pojo.DTO.CommodityDTO;
 import cn.edu.jit.reptile.pojo.DTO.PriceDTO;
 import cn.edu.jit.reptile.pojo.DTO.ShopDTO;
 import cn.edu.jit.reptile.repository.CommodityRepository;
@@ -29,6 +30,9 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
+import java.util.List;
 
 /**
  * @author LuZhong
@@ -37,6 +41,10 @@ import java.util.*;
 @RefreshScope
 @Slf4j
 public class CommodityServiceImpl implements CommodityService {
+    private static final Map<Pattern, CommodityDTO.Store> PATTERNS = new HashMap<>();
+    static {
+        PATTERNS.put(Pattern.compile("https://item.m.jd.com/product/\\d+.html"), CommodityDTO.Store.JD);
+    }
     @Value("${price-url}")
     private String priceUrl;
     @Value("${shop-url}")
@@ -98,5 +106,22 @@ public class CommodityServiceImpl implements CommodityService {
     @Override
     public Optional<CommodityDO> findCommodityById(String id) {
         return commodityRepository.findById(id);
+    }
+
+    @Override
+    public Optional<CommodityDTO> findStoreAndId(String url) {
+        final AtomicReference<CommodityDTO> result = new AtomicReference<>();
+        PATTERNS.forEach((pattern, store) -> {
+            if (pattern.matcher(url).find()) {
+                int endIndex = url.indexOf("?");
+                String str = url;
+                if (endIndex > 0) {
+                    str = str.substring(0, endIndex);
+                }
+                String id = str.substring(str.lastIndexOf("/") + 1, str.lastIndexOf(".html"));
+                result.set(new CommodityDTO(store, id));
+            }
+        });
+        return Optional.ofNullable(result.get());
     }
 }

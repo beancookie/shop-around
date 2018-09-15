@@ -1,6 +1,7 @@
 package cn.edu.jit.reptile.service;
 
 import cn.edu.jit.reptile.pojo.DO.CommodityDO;
+import cn.edu.jit.reptile.pojo.DTO.CommodityDTO;
 import cn.edu.jit.reptile.pojo.DTO.PriceDTO;
 import cn.edu.jit.reptile.pojo.DTO.ShopDTO;
 
@@ -31,4 +32,11 @@ public interface CommodityService {
      * @return
      */
     Optional<CommodityDO> findCommodityById(String id);
+
+    /**
+     * 根据url查询商店
+     * @param url
+     * @return
+     */
+    Optional<CommodityDTO> findStoreAndId(String url);
 }

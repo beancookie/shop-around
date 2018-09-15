@@ -101,7 +101,8 @@
         {title: '一周'},
         {title: '一月'}
       ],
-      depreciates: []
+      depreciates: [],
+
     }
     onTabChange({detail}) {
       let day = this.days[detail.key]
@@ -152,7 +153,6 @@
     }
     onShow() {
       this.isEnd = true
-      this.loadText = '~没有更多了~'
     }
   }
 </script>

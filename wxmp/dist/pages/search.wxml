@@ -5,7 +5,7 @@
     </wxc-panel>
     <wxc-flex main="center">
       <view class="button-wrap">
-        <wxc-button bindtap="toComponent" type="beauty" value="{{search}}" data-wpytocomponent-a=""/>
+        <wxc-button bindtap="toHistory" type="beauty" value="{{search}}" data-wpytohistory-a=""/>
       </view>
     </wxc-flex>
     <wxc-panel title="历史记录">

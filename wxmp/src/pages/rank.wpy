@@ -44,9 +44,7 @@
     children
   } from '../config/tree'
   import {
-    RANK,
-    CATEGORY,
-    DATE,
+    CATEGORY
   } from '../config/constant'
   export default class Rank extends wepy.page {
     config = {
@@ -69,29 +67,9 @@
       this.mainActiveIndex = detail.index || 0
     }
     onClickItem({detail}) {
-      let activeId = detail.id || 0
-      this.activeId = activeId
-      let category = ''
-      children.forEach(e => {
-        if (activeId == e.id) {
-          category = e.text
-          wx.setStorageSync(CATEGORY, category)
-        }  
-      })
-      this.$navigate(`./commodity`)
-    }
-    getNow() {
-      let now = new Date()
-      let nowDate = now.getFullYear() + '' + now.getMonth() + '' + now.getDay()
-      return nowDate
+      // this.$navigate(`./commodity`)
     }
     onLoad() {
-      let nowDate = this.getNow()
-      let date = wx.getStorageSync(DATE)
-      if (date || date != nowDate) {
-        wx.clearStorageSync()
-        wx.setStorageSync(DATE, nowDate)
-      }
     }
   }
 </script>

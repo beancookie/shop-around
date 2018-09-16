@@ -35,7 +35,8 @@
     "@minui/wxc-tab": "^1.0.8",
     "@minui/wxc-toast": "^1.0.9",
     "vant-weapp": "^0.3.2",
-    "wepy": "^1.7.2"
+    "wepy": "^1.7.2",
+    "wepy-async-function": "^1.4.6"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.1",

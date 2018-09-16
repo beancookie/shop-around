@@ -24,7 +24,7 @@
     <wxc-flex main="center">
       <view class="button-wrap">
         <wxc-button 
-          @tap="toComponent()" 
+          @tap="toHistory()" 
           type="beauty" 
           value="{{search}}"
         />
@@ -70,9 +70,9 @@
 <script>
   import wepy from 'wepy'
   import {
-    COMMODITY,
     SEARCH_HISTORY
   } from '../config/constant'
+  import api from '../api/api'
   export default class Search extends wepy.page {
     config = {
       navigationBarTitleText: '查询商品历史价格',
@@ -97,32 +97,16 @@
       isEnd: true
     }
     methods = {
-      toComponent() {
+      toHistory() {
         if (this.searchContent && this.searchContent != '') {
-          this.$navigate(`./history`)
+          this.getCommodity()
         }
       },
       eidtTextarea(textarea) {
-        let that = this
         let searchContent = textarea.detail.value
         if (searchContent && searchContent != '') {
-          that.searchContent = searchContent
-          wx.request({
-            url: 'http://localhost:7004/reptile/commodity/url', 
-            data: {
-              url: searchContent
-            },
-            success(res) {
-              let data = res.data
-              wx.setStorageSync(COMMODITY, data)
-              that.$data.searchList.push({
-                desc: data.name,
-                icon: 'star'
-              })
-              wx.setStorageSync(SEARCH_HISTORY, that.$data.searchList)
-              that.$navigate(`./history`)
-            }
-          })
+          this.searchContent = searchContent
+          this.getCommodity()
         }
       },
       doClean() {
@@ -138,6 +122,19 @@
       onCancel () {
         let dialogComponent = this.$wxpage.selectComponent('.wxc-dialog')
         dialogComponent && dialogComponent.hide()
+      }
+    }
+    async getCommodity() {
+      const res = await api.getCommodityByUrl({
+        query: {
+          url: this.searchContent
+        }
+      })
+      if (res.statusCode == 200) {
+        this.$preload('commodity', res.data)
+        this.searchList.push({desc: res.data.name, icon: 'star'})
+        wx.setStorageSync(SEARCH_HISTORY, this.searchList)
+        this.$navigate('./history')
       }
     }
     onLoad() {

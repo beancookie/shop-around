@@ -7,9 +7,6 @@ module.exports = {
     less: {
       'compress': true
     },
-    /*sass: {
-      outputStyle: 'compressed'
-    },*/
     babel: {
       'sourceMap': true,
       'presets': [

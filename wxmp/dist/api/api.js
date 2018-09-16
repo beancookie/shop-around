@@ -1,0 +1,23 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _wxRequest = require('./../utils/wxRequest.js');
+
+// const apiMall = 'https://sujiefs.com/'
+var apiMall = 'http://localhost:7004/';
+
+var getCommodityByUrl = function getCommodityByUrl(params) {
+  return (0, _wxRequest.wxRequest)(params, apiMall + 'reptile/commodity/url');
+};
+var getRankByCategoryAndDay = function getRankByCategoryAndDay(params) {
+  return (0, _wxRequest.wxRequest)(params, apiMall + 'analyse/rank');
+};
+
+exports.default = {
+  getCommodityByUrl: getCommodityByUrl,
+  getRankByCategoryAndDay: getRankByCategoryAndDay
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImFwaS5qcyJdLCJuYW1lcyI6WyJhcGlNYWxsIiwiZ2V0Q29tbW9kaXR5QnlVcmwiLCJwYXJhbXMiLCJnZXRSYW5rQnlDYXRlZ29yeUFuZERheSJdLCJtYXBwaW5ncyI6Ijs7Ozs7O0FBQUE7O0FBSUE7QUFDQSxJQUFNQSxVQUFVLHdCQUFoQjs7QUFFQSxJQUFNQyxvQkFBb0IsU0FBcEJBLGlCQUFvQixDQUFDQyxNQUFEO0FBQUEsU0FBWSwwQkFBVUEsTUFBVixFQUFrQkYsVUFBVSx1QkFBNUIsQ0FBWjtBQUFBLENBQTFCO0FBQ0EsSUFBTUcsMEJBQTBCLFNBQTFCQSx1QkFBMEIsQ0FBQ0QsTUFBRDtBQUFBLFNBQVksMEJBQVVBLE1BQVYsRUFBa0JGLFVBQVUsY0FBNUIsQ0FBWjtBQUFBLENBQWhDOztrQkFFZTtBQUNiQyxzQ0FEYTtBQUViRTtBQUZhLEMiLCJmaWxlIjoiYXBpLmpzIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHtcbiAgd3hSZXF1ZXN0XG59IGZyb20gJy4uL3V0aWxzL3d4UmVxdWVzdCdcblxuLy8gY29uc3QgYXBpTWFsbCA9ICdodHRwczovL3N1amllZnMuY29tLydcbmNvbnN0IGFwaU1hbGwgPSAnaHR0cDovL2xvY2FsaG9zdDo3MDA0LydcblxuY29uc3QgZ2V0Q29tbW9kaXR5QnlVcmwgPSAocGFyYW1zKSA9PiB3eFJlcXVlc3QocGFyYW1zLCBhcGlNYWxsICsgJ3JlcHRpbGUvY29tbW9kaXR5L3VybCcpXG5jb25zdCBnZXRSYW5rQnlDYXRlZ29yeUFuZERheSA9IChwYXJhbXMpID0+IHd4UmVxdWVzdChwYXJhbXMsIGFwaU1hbGwgKyAnYW5hbHlzZS9yYW5rJylcblxuZXhwb3J0IGRlZmF1bHQge1xuICBnZXRDb21tb2RpdHlCeVVybCxcbiAgZ2V0UmFua0J5Q2F0ZWdvcnlBbmREYXlcbn1cbiJdfQ==

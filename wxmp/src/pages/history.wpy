@@ -93,7 +93,7 @@
     data = {
       currentPrice: 0,
       lowestPrice: 0,
-      commodity: undefined,
+      commodity: {},
       ec: {}
     }
     methods = {
@@ -102,20 +102,22 @@
       }
     }
     initChart(canvas, width, height) {
+      // 价格数组
       let prices = []
+      // 日期数组
       let dates = []
-      if (this.commodity) {
-        let lowestPrice = 2 << 20
-        this.commodity.prices.forEach(e => {
-          if (e.price < lowestPrice) {
-            lowestPrice = e.price
-          }
-          prices.push(e.price)
-          dates.push(e.date)
-        })
-        this.lowestPrice = lowestPrice
-        this.currentPrice = prices[prices.length - 1]
-      }
+      let lowestPrice = 2 << 20
+      this.commodity.prices.forEach(e => {
+        if (e.price < lowestPrice) {
+          lowestPrice = e.price
+        }
+        prices.push(e.price)
+        dates.push(e.date)
+      })
+      // 历史最低价
+      this.lowestPrice = lowestPrice
+      // 当前价格
+      this.currentPrice = prices[prices.length - 1]
 
       const chart = echarts.init(canvas, null, {
         width: width,
@@ -166,11 +168,8 @@
       chart.setOption(option)
       return chart
     }
-    onLoad() {
-      let commodity = wx.getStorageSync(COMMODITY)
-      if (commodity) {
-        this.commodity = commodity
-      }
+    onLoad(params, data) {
+      this.commodity = data.preload.commodity
     }
   }
 </script>

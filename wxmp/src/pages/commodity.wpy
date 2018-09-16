@@ -74,7 +74,6 @@
   import wepy from 'wepy'
   import {
     RANK,
-    DAY,
     CATEGORY
   } from '../config/constant'
   export default class Rank extends wepy.page {
@@ -105,36 +104,6 @@
 
     }
     onTabChange({detail}) {
-      let day = this.days[detail.key]
-      let ranks = wx.getStorageSync(RANK + ":" + day)
-      let category = wx.getStorageSync(CATEGORY)
-      if (ranks) {
-        ranks.forEach(e => {
-          if (e.category == category) {
-            let index = 1
-            e.depreciateDOList.forEach(ee => {
-              this.depreciates.push(
-                {rank: index++, name: ee.name, price: ee.depreciate, imgUrl: ee.imgUrl}
-              )
-            })
-          }
-        })
-      } else {
-        this.depreciates = []
-        wx.request({
-          url: 'http://localhost:7004/analyse/rank', 
-          data: {
-            day: day
-          },
-          success(res) {
-            let data = res.data
-            wx.setStorageSync(RANK + ":" + day, data)
-          }
-        })
-      }
-      console.log(day)
-      console.log(this.depreciates)
-      
     } 
     onLoad() {
       let ranks = wx.getStorageSync(RANK + ":1")

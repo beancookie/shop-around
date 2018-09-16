@@ -124,8 +124,6 @@
       }
       this.isEnd = true
       this.loadText = '~没有更多了~'
-      console.log(this.depreciates)
-      
     } 
     onLoad(params, data) {
       this.category = data.preload.category

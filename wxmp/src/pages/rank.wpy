@@ -67,7 +67,16 @@
       this.mainActiveIndex = detail.index || 0
     }
     onClickItem({detail}) {
-      // this.$navigate(`./commodity`)
+      this.activeId = detail.id || 0
+      let category = ''
+      children.forEach(e => {
+        if (this.activeId == e.id) {
+          category = e.text
+          wx.setStorageSync(CATEGORY, category)
+        }  
+      })
+      this.$preload('category', category)
+      this.$navigate('./commodity')
     }
     onLoad() {
     }

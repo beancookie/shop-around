@@ -34,7 +34,7 @@ public class DepreciateRankServiceImpl implements DepreciateRankService {
     @Autowired
     private RedisRankService redisRankService;
 
-    private static final ThreadPoolExecutor POOLS = new ThreadPoolExecutor(5, 10, 100, TimeUnit.SECONDS, new BlockingArrayQueue<>());
+    private static final ThreadPoolExecutor POOLS = new ThreadPoolExecutor(1, 2, 60, TimeUnit.SECONDS, new BlockingArrayQueue<>());
 
     @PostConstruct
     public void init() {
@@ -68,7 +68,7 @@ public class DepreciateRankServiceImpl implements DepreciateRankService {
         // 对比数据集
         Dataset<Row> comparisonData = sparkSession.sql("SELECT _id, name, url, imgUrl, shopName, category, inline(prices) FROM commodity").filter("date = '" + date.format(Contents.FORMATTER) + "' AND price > 0");
         Dataset<Row> tmpData = currentData.join(comparisonData, currentData.col("_id").equalTo(comparisonData.col("_id")), "left")
-                .select(currentData.col("_id"), currentData.col("name"), currentData.col("url"), currentData.col("imgUrl"), currentData.col("shopName"), currentData.col("category"), currentData.col("price").$minus(comparisonData.col("price")).as("depreciate"), currentData.col("date")).alias("tmp");
+                .select(currentData.col("_id"), currentData.col("name"), currentData.col("url"), currentData.col("imgUrl"), currentData.col("shopName"), currentData.col("category"), currentData.col("price").$minus(comparisonData.col("price")).as("depreciate"), currentData.col("date"));
         // 创建临时视图
         tmpData.createOrReplaceTempView("tmp");
         return tmpData.sqlContext().sql("SELECT _id, name, url, imgUrl, shopName, category, depreciate FROM (" +

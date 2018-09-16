@@ -53,9 +53,9 @@
                 <text class="name">{{depreciate.name}}</text>
               </wxc-flex>
               <wxc-flex wrap="wrap" main="center">
-                <wxc-label class="label" type="corner" type-color="#FF8C00">Top{{depreciate.rank}}</wxc-label>
+                <wxc-label class="label" type="corner" type-color="#FF8C00">Top {{depreciate.rank}}</wxc-label>
                 <text class="price">直降</text>
-                <wxc-price class="price" icon="sub">{{depreciate.price}}</wxc-price>
+                <wxc-price class="price" icon="sub">{{depreciate.depreciate}}</wxc-price>
               </wxc-flex>
             </view>
           </wxc-panel>
@@ -114,12 +114,18 @@
       if (res.statusCode == 200) {
         if (res.data.length == 1) {
           this.depreciates = res.data[0].depreciateDOList
+          let index = 1;
+          this.depreciates.forEach(e => {
+            e.rank = index++;
+          })
         }
       } else {
         this.depreciates = []
       }
       this.isEnd = true
       this.loadText = '~没有更多了~'
+      console.log(this.depreciates)
+      
     } 
     onLoad(params, data) {
       this.category = data.preload.category

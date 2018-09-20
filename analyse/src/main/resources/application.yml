@@ -1,0 +1,8 @@
+spring:
+  data:
+    mongodb:
+      host: mongo
+      database: shop_around
+  redis:
+    host: redis
+    port: 6379

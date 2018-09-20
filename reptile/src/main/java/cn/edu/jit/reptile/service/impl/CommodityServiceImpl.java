@@ -67,6 +67,13 @@ public class CommodityServiceImpl implements CommodityService {
         return HttpClients.createDefault();
     }
 
+    /**
+     * 使用HttpClient模拟http请求将返回结果填充到DTO
+     * @param url
+     * @param type
+     * @param <T>
+     * @return
+     */
     private <T> LinkedList<T> responseToDTO(String url, Type type) {
         CloseableHttpClient httpClient = createHttpClient();
         HttpGet get = new HttpGet(url);

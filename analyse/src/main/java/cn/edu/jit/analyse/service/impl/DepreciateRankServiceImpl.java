@@ -1,11 +1,11 @@
 package cn.edu.jit.analyse.service.impl;
 
+import cn.edu.jit.analyse.config.Contents;
 import cn.edu.jit.analyse.config.SparkConfig;
+import cn.edu.jit.analyse.pojo.DO.CommodityDO;
 import cn.edu.jit.analyse.pojo.DO.DepreciateDO;
 import cn.edu.jit.analyse.service.DepreciateRankService;
 import cn.edu.jit.analyse.service.RedisRankService;
-import cn.edu.jit.reptile.config.Contents;
-import cn.edu.jit.reptile.pojo.DO.CommodityDO;
 import com.mongodb.spark.MongoSpark;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -38,7 +38,7 @@ public class DepreciateRankServiceImpl implements DepreciateRankService {
 
     @PostConstruct
     public void init() {
-        System.setProperty("hadoop.home.dir", sparkConfig.getHadoopHomeDir());
+//        System.setProperty("hadoop.home.dir", sparkConfig.getHadoopHomeDir());
     }
 
     /**
@@ -61,12 +61,13 @@ public class DepreciateRankServiceImpl implements DepreciateRankService {
      *
      * @param sparkSession
      * @param currentData  待对比数据
-     * @param date         对日期
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           * @param date         对日期
      * @return
      */
     private Map<String, List<DepreciateDO>> getDayRankByDays(SparkSession sparkSession, Dataset<Row> currentData, LocalDate date) {
         // 对比数据集
         Dataset<Row> comparisonData = sparkSession.sql("SELECT _id, name, url, imgUrl, shopName, category, inline(prices) FROM commodity").filter("date = '" + date.format(Contents.FORMATTER) + "' AND price > 0");
+        comparisonData.show();
         Dataset<Row> tmpData = currentData.join(comparisonData, currentData.col("_id").equalTo(comparisonData.col("_id")), "left")
                 .select(currentData.col("_id"), currentData.col("name"), currentData.col("url"), currentData.col("imgUrl"), currentData.col("shopName"), currentData.col("category"), currentData.col("price").$minus(comparisonData.col("price")).as("depreciate"), currentData.col("date"));
         // 创建临时视图
@@ -97,6 +98,7 @@ public class DepreciateRankServiceImpl implements DepreciateRankService {
             explicitDS.createOrReplaceTempView("commodity");
             // 待对比数据集
             Dataset<Row> currentData = sparkSession.sql("SELECT _id, name, url, imgUrl, shopName, category, inline(prices) FROM commodity").filter("date = '" + Contents.FORMATTER.format(date) + "' AND price > 0");
+            currentData.show();
             // 将排行榜存入redis
             sparkConfig.getRankDays().forEach(day -> redisRankService.addRankToRedisByDay(getDayRankByDays(sparkSession, currentData, date.minusDays(day)), day));
             jsc.close();

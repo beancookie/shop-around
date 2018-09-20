@@ -131,6 +131,7 @@
         }
       })
       if (res.statusCode == 200) {
+        console.log('查询历史价格成功')
         this.$preload('commodity', res.data)
         this.searchList.push({desc: res.data.name, icon: 'star'})
         wx.setStorageSync(SEARCH_HISTORY, this.searchList)

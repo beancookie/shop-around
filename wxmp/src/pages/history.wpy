@@ -107,13 +107,17 @@
       // 日期数组
       let dates = []
       let lowestPrice = 2 << 20
-      this.commodity.prices.forEach(e => {
-        if (e.price < lowestPrice) {
-          lowestPrice = e.price
-        }
-        prices.push(e.price)
-        dates.push(e.date)
-      })
+      if (this.commodity.prices) {
+        this.commodity.prices.forEach(e => {
+          if (e.price < lowestPrice) {
+            lowestPrice = e.price
+          }
+          prices.push(e.price)
+          dates.push(e.date)
+        })
+      } else {
+        lowestPrice = 0
+      }
       // 历史最低价
       this.lowestPrice = lowestPrice
       // 当前价格

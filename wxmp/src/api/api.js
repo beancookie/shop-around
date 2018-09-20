@@ -2,11 +2,10 @@ import {
   wxRequest
 } from '../utils/wxRequest'
 
-// const apiMall = 'https://sujiefs.com/'
-const apiMall = 'http://localhost:7004/'
+const zuulAddr = 'http://172.29.30.229:7004/'
 
-const getCommodityByUrl = (params) => wxRequest(params, apiMall + 'reptile/commodity/url')
-const getRankByCategoryAndDay = (params) => wxRequest(params, apiMall + 'analyse/rank')
+const getCommodityByUrl = (params) => wxRequest(params, zuulAddr + 'reptile/commodity/url')
+const getRankByCategoryAndDay = (params) => wxRequest(params, zuulAddr + 'analyse/rank')
 
 export default {
   getCommodityByUrl,

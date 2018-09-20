@@ -1,6 +1,8 @@
 spring:
   data:
     mongodb:
+      host: mongo
       database: shop_around
   redis:
-    host: 127.0.0.1
+    host: redis
+    port: 6379

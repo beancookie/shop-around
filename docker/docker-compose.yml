@@ -1,0 +1,120 @@
+version: '3.3'
+services:
+  redis:
+    image: redis:latest
+    hostname: redis
+    restart: always
+    volumes:
+      - type: volume
+        source: db-data
+        target: /data
+        volume:
+          nocopy: true
+    configs:
+      - redis-config
+    deploy:
+      replicas: 1
+    expose:
+      - '6379'
+
+  mongo:
+    image: mongo:latest
+    hostname: mongo
+    restart: always
+    volumes:
+      - type: volume
+        source: db-data
+        target: /data/db
+        volume:
+          nocopy: true
+    deploy:
+      replicas: 1
+    expose:
+      - '27017'
+
+  rabbitmq:
+    image: rabbitmq:latest
+    hostname: rabbitmq
+    restart: always
+    deploy:
+      replicas: 1
+    expose:
+      - '5672'
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  spark:
+    image: sequenceiq/spark:latest
+    restart: always
+    deploy:
+      replicas: 1
+    expose:
+      - '4040'
+      - '8042'
+      - '7077'
+      - '8088'
+      - '8080'
+    command: bash /usr/local/spark/sbin/start-master.sh && ping localhost > /dev/null
+
+  eureka:
+    image: shop-around/eureka
+    restart: always
+    expose:
+      - '8888'
+    ports:
+      - '8888:8888'
+
+  config:
+    image: shop-around/config
+    hostname: config
+    restart: always
+    depends_on:
+      - rabbitmq
+      - eureka
+    expose:
+      - '7001'
+
+  reptile:
+    image: shop-around/reptile
+    restart: always
+    depends_on:
+      - mongo
+      - redis
+      - eureka
+      - config
+    expose:
+      - '7002'
+
+  analyse:
+    image: shop-around/analyse
+    restart: always
+    depends_on:
+      - mongo
+      - redis
+      - spark
+      - eureka
+    expose:
+      - '7003'
+
+  zuul:
+    image: shop-around/zuul
+    hostname: localhost
+    restart: always
+    depends_on:
+      - eureka
+      - config
+    expose:
+      - '7004'
+    ports:
+      - '7004:7004'
+
+networks:
+  default:
+
+volumes:
+  db-data:
+
+configs:
+  redis-config:
+    file: ./redis.conf

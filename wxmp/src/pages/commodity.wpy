@@ -101,7 +101,10 @@
       ],
       depreciates: []
     }
-    async onTabChange({detail}) {
+    onTabChange({detail}) {
+       this.getRankData(detail)
+    } 
+    async getRankData(detail) {
       this.day = this.days[detail.key]
       this.isEnd = false
       this.loadText = '~加载中~'
@@ -112,19 +115,23 @@
         }
       })
       if (res.statusCode == 200) {
-        if (res.data.length == 1) {
+        if (res.data.length >= 1) {
+          console.log('查询降价排行榜成功')
           this.depreciates = res.data[0].depreciateDOList
-          let index = 1;
+          let index = 1
           this.depreciates.forEach(e => {
-            e.rank = index++;
+            e.rank = index++
           })
+          this.isEnd = true
+          this.loadText = '~没有更多了~'
+        } else {
+          this.depreciates = []
+          this.isEnd = true
+          this.loadText = '~没有更多了~'
         }
-      } else {
-        this.depreciates = []
       }
-      this.isEnd = true
-      this.loadText = '~没有更多了~'
-    } 
+      this.$apply()
+    }
     onLoad(params, data) {
       this.category = data.preload.category
     }

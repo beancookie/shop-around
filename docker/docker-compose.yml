@@ -14,8 +14,8 @@ services:
       - redis-config
     deploy:
       replicas: 1
-    expose:
-      - '6379'
+    ports:
+      - '6379:6379'
 
   mongo:
     image: mongo:latest
@@ -29,8 +29,8 @@ services:
           nocopy: true
     deploy:
       replicas: 1
-    expose:
-      - '27017'
+    ports:
+      - '27017:27017'
 
   rabbitmq:
     image: rabbitmq:latest
@@ -38,12 +38,80 @@ services:
     restart: always
     deploy:
       replicas: 1
-    expose:
-      - '5672'
+    ports:
+      - '5672:5672'
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
 
+<<<<<<< HEAD
+#  spark:
+#    image: sequenceiq/spark:latest
+#    restart: always
+#    deploy:
+#      replicas: 1
+#    configs:
+#      - spark-config
+#    expose:
+#      - '4040'
+#      - '8042'
+#      - '7077'
+#      - '8088'
+#      - '8080'
+#    command: bash /usr/local/spark/sbin/start-master.sh && ping localhost > /dev/null
+#
+#  eureka:
+#    image: shop-around/eureka
+#    restart: always
+#    expose:
+#      - '8888'
+#    ports:
+#      - '8888:8888'
+#
+#  config:
+#    image: shop-around/config
+#    hostname: config
+#    restart: always
+#    depends_on:
+#      - rabbitmq
+#      - eureka
+#    expose:
+#      - '7001'
+#
+#  reptile:
+#    image: shop-around/reptile
+#    restart: always
+#    depends_on:
+#      - mongo
+#      - redis
+#      - eureka
+#      - config
+#    expose:
+#      - '7002'
+#
+#  analyse:
+#    image: shop-around/analyse
+#    restart: always
+#    depends_on:
+#      - mongo
+#      - redis
+#      - spark
+#      - eureka
+#    expose:
+#      - '7003'
+#
+#  zuul:
+#    image: shop-around/zuul
+#    hostname: localhost
+#    restart: always
+#    depends_on:
+#      - eureka
+#      - config
+#    expose:
+#      - '7004'
+#    ports:
+#      - '7004:7004'
+=======
   spark:
     image: sequenceiq/spark:latest
     restart: always
@@ -108,6 +176,7 @@ services:
       - '7004'
     ports:
       - '7004:7004'
+>>>>>>> 9eaab1694b8bd7b2763baa957624c75e69e3110b
 
 networks:
   default:
@@ -118,3 +187,8 @@ volumes:
 configs:
   redis-config:
     file: ./redis.conf
+<<<<<<< HEAD
+#  spark-config:
+#    file: ./spark.conf
+=======
+>>>>>>> 9eaab1694b8bd7b2763baa957624c75e69e3110b

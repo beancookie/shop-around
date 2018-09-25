@@ -1,0 +1,6 @@
+zuul:
+  host:
+    connect-timeout-millis: 5000
+    max-per-route-connections: 2000
+    max-total-connections: 2000
+    socket-timeout-millis: 3000
